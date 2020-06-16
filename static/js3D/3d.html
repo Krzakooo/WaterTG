@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="en">
+
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <meta http-equiv="X-UA-Compatible" content="ie=edge">
+        <title>Document</title>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+        <script src="three.js"></script>
+        <script src="OrbitControls.js"></script>
+        <script src="3d.js"></script>
+        <script src="./hex.js"></script>
+
+        <style>
+            body {
+                margin: 0;
+                overflow: hidden;
+            }
+            #temptext {
+                color: blueviolet;
+                display: inline;
+                margin-left: 30%;
+            }
+            
+        </style>
+    </head>
+
+    <body>
+        <form>
+            <label>
+                Intensity: <input type="range" min="1" max="100" value="40" id="range">
+                <p id="temptext">Click to load</p>
+            </label>
+        </form>
+        <div id="root">
+
+        </div>
+
+    </body>
+
+</html>

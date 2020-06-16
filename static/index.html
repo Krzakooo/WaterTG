@@ -1,0 +1,223 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Nintendo DS</title>
+    <script src="hex.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+    <link rel="shortcut icon" type="image/png"
+        href="https://upload.wikimedia.org/wikipedia/commons/0/04/Nintendo_Switch_logo%2C_square.png">
+
+    <style>
+        body {
+            color: white;
+            font-family: monospace;
+        }
+
+        #box {
+            position: absolute;
+            left: 460px;
+            top: 100px;
+            width: 100%;
+            height: 100%;
+        }
+
+        #generator {
+            position: absolute;
+            left: 0px;
+            top: 0px;
+            width: 410px;
+            height: 100%;
+            background-color: whitesmoke;
+            padding: 20px;
+        }
+
+        #params {
+            color: black;
+            padding: 20px;
+            overflow-wrap: break-word;
+        }
+
+        #hud {
+            position: absolute;
+            left: 460px;
+            top: 0;
+            width: 100%;
+            height: 100px;
+            padding: 20px;
+        }
+
+        label {
+            margin-left: 20px;
+            color: black;
+        }
+
+        .divTile {
+            position: absolute;
+        }
+
+        .button {
+            width: 100px;
+            height: 30px;
+            background-color: whitesmoke;
+            border: 1px solid blueviolet;
+            margin: 10px;
+            font-family: monospace;
+        }
+
+        .button:active {
+            background-color: rgba(137, 43, 226, 0.2);
+        }
+
+        #gen,
+        #ddd {
+            background-color: blueviolet;
+            color: whitesmoke;
+            border-color: rgb(32, 32, 32);
+        }
+
+        #save {
+            background-color: rgb(32, 32, 32);
+            color: whitesmoke;
+            border-color: blueviolet;
+        }
+    </style>
+</head>
+
+<body>
+    <div id="hud">
+        <button id="wall" class="button" type="button">Wall</button>
+        <button id="enemy" class="button" type="button">Enemy</button>
+        <button id="treasure" class="button" type="button">Treasure</button>
+        <button id="light" class="button" type="button">Light</button>
+        <button id="save" class="button" type="button">Save</button>
+        <a href="/hex"><button id="ddd" class="button" type="button">Go 3D</button></a>
+
+    </div>
+    <div id="generator">
+        <label for="size">Size:</label>
+        <select id="size">
+
+        </select>
+        <button id="gen" class="button" type="button">Generate</button>
+        <div id="params">
+
+        </div>
+    </div>
+    <div id="box"></div>
+
+    <script>
+        window.oncontextmenu = (e) => {
+            e.preventDefault();
+        }
+        var selSize = document.getElementById("size")
+
+        function selectDef(selName) {
+            for (let x = 2; x <= 20; x++) {
+                var op = document.createElement("option")
+                op.innerText = x
+                selName.appendChild(op)
+            }
+        }
+        selectDef(selSize)
+
+
+
+        var divTile
+        var box = document.getElementById("box")
+        var gen = document.getElementById("gen")
+        gen.onclick = function () {
+            obj = {}
+            obj.size = selSize.value
+            arr = []
+            var offsetLeft = 0
+            var offsetTop = 0
+            var divtileID = 0
+            var offsetRow = false
+            box.innerHTML = ""
+            for (let x = 0; x < selSize.value; x++) {
+                arr[x] = []
+                if (offsetRow == false) {
+                    offsetLeft = 0
+                    var y = 0
+                    offsetRow = true
+                } else {
+                    offsetLeft = 26
+                    var y = 1
+                    offsetRow = false
+                }
+                offsetTop += 40
+                var br = document.createElement("br")
+                box.appendChild(br)
+                for (y; y < selSize.value; y++) {
+                    new mapTile()
+                    divTile.setAttribute("id", divtileID)
+                    divTile.angle = -60
+                    divTile.angleRev = -60
+                    divTile.style.left = offsetLeft + "px"
+                    divTile.style.top = offsetTop + "px"
+                    offsetLeft += 52
+                    box.appendChild(divTile)
+                    divTile.x = x
+                    divTile.y = y
+                    arr[x][y] = divTile
+                    //tworzenie objektu dla tile'i
+                    objTile = {}
+                    objTile.x = x
+                    objTile.y = y
+                    objTile.id = divtileID
+                    objTile.type = "wall"
+                    objTile.in = null
+                    objTile.out = null
+                    let quant = divtileID
+                    obj[quant] = objTile
+                    divtileID++
+                }
+
+            }
+            console.log(obj)
+            console.log(arr)
+            obj.count = divtileID
+
+            rev = 5
+            ifrev = false
+            constin = 0
+            oldID = 2137
+            notfirst = false
+        }
+        var currentType = "wall"
+        var wall = document.getElementById("wall")
+        var enemy = document.getElementById("enemy")
+        var treasure = document.getElementById("treasure")
+        var light = document.getElementById("light")
+        var save = document.getElementById("save")
+        wall.onclick = function () {
+            currentType = "wall"
+        }
+        enemy.onclick = function () {
+            currentType = "enemy"
+        }
+        treasure.onclick = function () {
+            currentType = "treasure"
+        }
+        light.onclick = function () {
+            currentType = "light"
+        }
+        save.onclick = function () {
+            $.ajax({
+                url: "/save",
+                data: obj,
+                type: "POST",
+                success: function (data) {
+                    console.log("sent")
+                },
+                error: function (xhr, status, error) {},
+            });
+
+        }
+    </script>
+</body>
+
+</html>
